@@ -1,0 +1,1163 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AdminDashboardType {
+  activeStudents: Int!
+  activeTeachers: Int!
+  openComplaints: Int!
+  pendingAdmissions: Int!
+  pendingFeesAmount: Float!
+  pendingLeaves: Int!
+  thisMonthCollection: Float!
+  thisYearCollection: Float!
+  todayAttendancePresent: Int!
+  todayAttendanceRate: Float!
+  todayAttendanceTotal: Int!
+  totalClasses: Int!
+  totalNotices: Int!
+  totalStudents: Int!
+  totalTeachers: Int!
+}
+
+type AdmissionApplicationType {
+  address: String
+  applicationDate: String!
+  applicationNo: String!
+  classApplied: String!
+  createdAt: String!
+  dateOfBirth: String!
+  gender: Gender!
+  id: String!
+  parentEmail: String!
+  parentName: String!
+  parentPhone: String!
+  previousInstitute: String
+  processedAt: String
+  processedBy: String
+  remarks: String
+  section: String
+  status: AdmissionStatus!
+  studentName: String!
+}
+
+type AdmissionListType {
+  count: Int!
+  hasNextPage: Boolean!
+  items: [AdmissionApplicationType!]!
+  total: Int!
+}
+
+type AdmissionStatsType {
+  approved: Int!
+  pending: Int!
+  rejected: Int!
+  total: Int!
+  waitlisted: Int!
+}
+
+enum AdmissionStatus {
+  APPROVED
+  PENDING
+  REJECTED
+  WAITLISTED
+}
+
+input ApplyLeaveInput {
+  fromDate: String!
+  reason: String!
+  studentProfileId: String
+  teacherProfileId: String
+  toDate: String!
+}
+
+input AttendanceEntryInput {
+  status: AttendanceStatus!
+  studentId: String!
+  subject: String
+}
+
+type AttendanceMarkResult {
+  markedCount: Int!
+  success: Boolean!
+}
+
+type AttendanceRecordType {
+  date: String!
+  id: String!
+  remarks: String
+  status: AttendanceStatus!
+  subject: String
+}
+
+enum AttendanceStatus {
+  ABSENT
+  HALF_DAY
+  HOLIDAY
+  LEAVE
+  PRESENT
+}
+
+type AttendanceSummaryType {
+  absentDays: Int!
+  leaveDays: Int!
+  percentage: Float!
+  presentDays: Int!
+  totalDays: Int!
+}
+
+type AuthResponse {
+  accessToken: String!
+  refreshToken: String!
+  user: AuthUserType!
+}
+
+type AuthStudentProfileType {
+  className: String
+  enrollmentNo: String
+  id: String!
+  section: String
+}
+
+type AuthTeacherProfileType {
+  department: String
+  employeeId: String
+  id: String!
+}
+
+type AuthUserType {
+  avatarUrl: String
+  email: String!
+  firstName: String
+  id: String!
+  isActive: Boolean!
+  lastName: String
+  phone: String
+  role: UserRole!
+  studentProfile: AuthStudentProfileType
+  teacherProfile: AuthTeacherProfileType
+}
+
+type BatchAttendanceType {
+  attendanceRate: Float!
+  className: String!
+  section: String
+}
+
+type BatchListType {
+  count: Int!
+  hasNextPage: Boolean!
+  items: [BatchType!]!
+  total: Int!
+}
+
+type BatchType {
+  academicYear: String!
+  id: String!
+  isActive: Boolean!
+  monthlyFee: Float!
+  name: String!
+  section: String!
+  studentCount: Int!
+}
+
+type BusRouteType {
+  busNumber: String!
+  capacity: Int!
+  driverName: String!
+  driverPhone: String!
+  id: String!
+  routeName: String!
+  routeNumber: String!
+  stops: [BusStopType!]!
+}
+
+type BusStopType {
+  dropTime: String!
+  id: String!
+  name: String!
+  order: Int!
+  pickupTime: String!
+  routeId: String!
+}
+
+input ChangePasswordInput {
+  currentPassword: String!
+  newPassword: String!
+}
+
+type ClassAttendanceSummaryType {
+  absentCount: Int!
+  className: String
+  date: String!
+  id: String!
+  leaveCount: Int!
+  percentage: Float!
+  presentCount: Int!
+  section: String
+  totalStudents: Int!
+}
+
+type ComplaintListType {
+  count: Int!
+  hasNextPage: Boolean!
+  items: [ComplaintType!]!
+  total: Int!
+}
+
+enum ComplaintStatus {
+  IN_REVIEW
+  PENDING
+  RESOLVED
+}
+
+type ComplaintType {
+  adminResponse: String
+  attachmentUrl: String
+  createdAt: String!
+  description: String!
+  id: String!
+  respondedAt: String
+  respondedBy: String
+  status: ComplaintStatus!
+  submittedById: String!
+  submitterEmail: String
+  submitterRole: String!
+  title: String!
+}
+
+input CreateAdminInput {
+  email: String!
+  firstName: String
+  lastName: String
+  password: String!
+  phone: String
+}
+
+input CreateAdmissionInput {
+  address: String
+  classApplied: String!
+  dateOfBirth: String!
+  gender: Gender!
+  parentEmail: String!
+  parentName: String!
+  parentPhone: String!
+  previousInstitute: String
+  section: String
+  studentName: String!
+}
+
+input CreateBatchInput {
+  academicYear: String!
+  monthlyFee: Float
+  name: String!
+  section: String!
+}
+
+input CreateBusRouteInput {
+  busNumber: String!
+  capacity: Int!
+  driverName: String!
+  driverPhone: String!
+  routeName: String!
+  routeNumber: String!
+}
+
+input CreateBusStopInput {
+  dropTime: String!
+  name: String!
+  order: Int!
+  pickupTime: String!
+  routeId: String!
+}
+
+input CreateComplaintInput {
+  attachmentUrl: String
+  description: String!
+  title: String!
+}
+
+input CreateExamScheduleInput {
+  className: String!
+  date: String!
+  duration: String
+  endTime: String!
+  examName: String!
+  maxMarks: Float
+  room: String
+  section: String
+  startTime: String!
+  subject: String!
+}
+
+input CreateFeeInputGql {
+  amount: Float!
+  discount: Float
+  dueDate: String!
+  feeType: String!
+  remarks: String
+  studentId: String!
+}
+
+input CreateHomeworkInput {
+  assignedById: String!
+  attachmentUrl: String
+  className: String!
+  description: String!
+  dueDate: String!
+  section: String
+  subject: String!
+  title: String!
+}
+
+input CreateNoticeInputGql {
+  attachmentUrl: String
+  category: NoticeCategory!
+  content: String!
+  expiresAt: String
+  isImportant: Boolean
+  targetRoles: [String!]
+  title: String!
+}
+
+input CreateStudentInput {
+  address: String
+  admissionDate: String
+  bloodGroup: String
+  className: String
+  dateOfBirth: String
+  email: String!
+  firstName: String!
+  gender: Gender
+  lastName: String!
+  parentEmail: String
+  parentFirstName: String
+  parentId: String
+  parentLastName: String
+  parentPhone: String
+  parentRelation: String
+  phone: String!
+  rollNumber: Int
+  section: String
+}
+
+input CreateTeacherInputGql {
+  address: String
+  assignedClassName: String
+  assignedSection: String
+  bankAccountNo: String
+  bankIfsc: String
+  bankName: String
+  baseSalary: Float!
+  department: String!
+  email: String!
+  firstName: String!
+  joiningDate: String!
+  lastName: String!
+  phone: String!
+  qualification: String
+  subject: String!
+}
+
+input CreateTimetableSlotInput {
+  className: String!
+  day: String!
+  endTime: String!
+  period: Int!
+  room: String
+  section: String
+  startTime: String!
+  subject: String!
+  teacherId: String
+}
+
+input CreateTopicInput {
+  description: String
+  order: Int!
+  subjectId: String!
+  title: String!
+}
+
+type DirectorDashboardType {
+  activeStudents: Int!
+  activeTeachers: Int!
+  openComplaints: Int!
+  pendingAdmissions: Int!
+  pendingFeesAmount: Float!
+  pendingLeaves: Int!
+  pendingSalaryAmount: Float!
+  thisMonthCollection: Float!
+  thisYearCollection: Float!
+  todayAttendancePresent: Int!
+  todayAttendanceRate: Float!
+  todayAttendanceTotal: Int!
+  totalClasses: Int!
+  totalNotices: Int!
+  totalSalaryPaidThisYear: Float!
+  totalStudents: Int!
+  totalTeachers: Int!
+}
+
+input EnterExamResultInput {
+  examScheduleId: String!
+  marksObtained: Float!
+  remarks: String
+  studentId: String!
+}
+
+type ExamResultListType {
+  count: Int!
+  hasNextPage: Boolean!
+  items: [ExamResultType!]!
+  total: Int!
+}
+
+type ExamResultType {
+  examName: String
+  examScheduleId: String!
+  grade: String
+  id: String!
+  marksObtained: Float!
+  maxMarks: Float
+  remarks: String
+  studentId: String!
+  studentName: String
+}
+
+type ExamScheduleListType {
+  count: Int!
+  hasNextPage: Boolean!
+  items: [ExamScheduleType!]!
+  total: Int!
+}
+
+type ExamScheduleType {
+  className: String
+  date: String!
+  duration: String
+  endTime: String!
+  examName: String!
+  id: String!
+  maxMarks: Float
+  room: String
+  section: String
+  startTime: String!
+  subject: String!
+}
+
+type ExamStatsType {
+  average: Float!
+  failed: Int!
+  highest: Float!
+  lowest: Float!
+  passed: Int!
+  total: Int!
+}
+
+input FeeFilterInputGql {
+  className: String
+  dueDateFrom: String
+  dueDateTo: String
+  feeType: String
+  search: String
+  section: String
+  status: FeeStatus
+  studentId: String
+}
+
+type FeeListType {
+  count: Int!
+  hasNextPage: Boolean!
+  items: [FeeRecordType!]!
+  total: Int!
+}
+
+type FeeRecordType {
+  amount: Float!
+  className: String
+  createdAt: String!
+  discount: Float!
+  dueDate: String!
+  enrollmentNo: String
+  feeType: String!
+  id: String!
+  isVerified: Boolean!
+  netAmount: Float!
+  paidDate: String
+  paymentMode: String
+  paymentScreenshotUrl: String
+  receiptNo: String
+  remarks: String
+  section: String
+  status: FeeStatus!
+  studentId: String!
+  studentName: String
+  verifiedAt: String
+  verifiedBy: String
+}
+
+type FeeStatsType {
+  overdueAmount: Float!
+  overdueCount: Int!
+  paidAmount: Float!
+  paidCount: Int!
+  pendingAmount: Float!
+  pendingCount: Int!
+  totalAmount: Float!
+  totalCount: Int!
+  verifyingCount: Int!
+}
+
+enum FeeStatus {
+  OVERDUE
+  PAID
+  PENDING
+  VERIFYING
+}
+
+enum Gender {
+  FEMALE
+  MALE
+  OTHER
+}
+
+type HomeworkListType {
+  count: Int!
+  hasNextPage: Boolean!
+  items: [HomeworkType!]!
+  total: Int!
+}
+
+type HomeworkSubmissionType {
+  feedback: String
+  fileUrl: String
+  grade: String
+  homeworkId: String!
+  id: String!
+  remarks: String
+  studentId: String!
+  studentName: String
+  submittedAt: String
+}
+
+type HomeworkType {
+  assignedById: String!
+  attachmentUrl: String
+  className: String
+  description: String!
+  dueDate: String!
+  id: String!
+  section: String
+  solutionDescription: String
+  solutionUrl: String
+  subject: String!
+  submissionsCount: Int!
+  teacherName: String
+  title: String!
+}
+
+type LeaveListType {
+  count: Int!
+  hasNextPage: Boolean!
+  items: [LeaveType!]!
+  total: Int!
+}
+
+enum LeaveStatus {
+  APPROVED
+  PENDING
+  REJECTED
+}
+
+type LeaveType {
+  adminNote: String
+  applicantEmail: String
+  applicantId: String!
+  applicantName: String
+  applicantRole: String!
+  createdAt: String!
+  fromDate: String!
+  id: String!
+  processedAt: String
+  processedBy: String
+  reason: String!
+  status: LeaveStatus!
+  toDate: String!
+  totalDays: Int!
+}
+
+input MarkStudentAttendanceInputGql {
+  className: String!
+  date: String!
+  records: [AttendanceEntryInput!]!
+  section: String
+}
+
+input MarkTeacherAttendanceInputGql {
+  checkInTime: String
+  checkOutTime: String
+  date: String!
+  remarks: String
+  status: AttendanceStatus!
+  teacherId: String!
+}
+
+type MessageResponse {
+  message: String!
+  success: Boolean!
+  tempPassword: String
+}
+
+type MonthlyCollectionType {
+  month: Int!
+  total: Float!
+}
+
+type Mutation {
+  applyForLeave(input: ApplyLeaveInput!): LeaveType!
+
+  """Change own password (any role)"""
+  changePassword(input: ChangePasswordInput!): MessageResponse!
+
+  """Director creates a new admin account"""
+  createAdmin(input: CreateAdminInput!): MessageResponse!
+  createBatch(input: CreateBatchInput!): BatchType!
+  createBusRoute(input: CreateBusRouteInput!): BusRouteType!
+  createBusStop(input: CreateBusStopInput!): BusStopType!
+  createExamSchedule(input: CreateExamScheduleInput!): ExamScheduleType!
+  createFeeRecord(input: CreateFeeInputGql!): FeeRecordType!
+  createHomework(input: CreateHomeworkInput!): HomeworkType!
+  createNotice(input: CreateNoticeInputGql!): NoticeType!
+  createStudent(input: CreateStudentInput!): StudentType!
+  createSyllabusSubject(academicYear: String!, className: String!, section: String, subjectName: String!): SyllabusSubjectType!
+  createSyllabusTopic(input: CreateTopicInput!): SyllabusTopicType!
+  createTeacher(input: CreateTeacherInputGql!): TeacherType!
+  createTimetableSlot(input: CreateTimetableSlotInput!): TimetableSlotType!
+  deleteBatch(id: ID!): Boolean!
+  deleteBusRoute(id: ID!): Boolean!
+  deleteBusStop(id: ID!): Boolean!
+  deleteExamSchedule(id: ID!): Boolean!
+  deleteHomework(id: ID!): Boolean!
+  deleteNotice(id: ID!): Boolean!
+  deleteSyllabusSubject(id: ID!): Boolean!
+  deleteSyllabusTopic(id: ID!): Boolean!
+  deleteTimetableSlot(id: ID!): Boolean!
+  enterExamResult(input: EnterExamResultInput!): ExamResultType!
+  gradeHomeworkSubmission(feedback: String, grade: String!, id: ID!): HomeworkSubmissionType!
+
+  """Login with email + password (all roles)"""
+  loginWithPassword(input: PasswordLoginInput!): AuthResponse!
+
+  """Logout â€“ revoke refresh token"""
+  logout(refreshToken: String!): MessageResponse!
+
+  """Logout from all devices"""
+  logoutAll: MessageResponse!
+  markAllNotificationsRead: Boolean!
+  markNotificationRead(id: ID!): Boolean!
+  markStudentAttendance(input: MarkStudentAttendanceInputGql!): AttendanceMarkResult!
+  markTeacherAttendance(input: MarkTeacherAttendanceInputGql!): TeacherAttendanceRecordType!
+  processLeaveApplication(adminNote: String, id: ID!, status: String!): LeaveType!
+  processSalaryPayment(input: ProcessSalaryInputGql!): SalaryRecordType!
+
+  """Refresh access token using refresh token"""
+  refreshTokens(input: RefreshTokenInput!): AuthResponse!
+
+  """Admin/Director resets any user password"""
+  resetUserPassword(input: ResetUserPasswordInput!): MessageResponse!
+  respondToComplaint(id: ID!, response: String!): ComplaintType!
+  sendNotification(input: SendNotificationInput!): Boolean!
+  submitAdmissionApplication(input: CreateAdmissionInput!): AdmissionApplicationType!
+  submitComplaint(input: CreateComplaintInput!): ComplaintType!
+  submitHomework(input: SubmitHomeworkInput!): HomeworkSubmissionType!
+  submitPaymentProof(feeId: ID!, screenshotUrl: String!): FeeRecordType!
+  teacherClockIn: TeacherAttendanceRecordType!
+  teacherClockOut: TeacherAttendanceRecordType!
+  toggleStudentActive(id: ID!, isActive: Boolean!): StudentType!
+  toggleSyllabusTopicCompletion(id: ID!): SyllabusTopicType!
+  updateAdmissionStatus(input: UpdateAdmissionStatusInput!): AdmissionApplicationType!
+  updateBatch(id: ID!, input: UpdateBatchInput!): BatchType!
+  updateComplaintStatus(id: ID!, status: String!): ComplaintType!
+  updateExamSchedule(id: ID!, input: UpdateExamScheduleInput!): ExamScheduleType!
+  updateFeeStatus(input: UpdateFeeStatusInputGql!): FeeRecordType!
+  updateNotice(id: ID!, input: UpdateNoticeInputGql!): NoticeType!
+  updateSalaryRecord(id: ID!, input: UpdateSalaryInputGql!): SalaryRecordType!
+  updateStudent(id: ID!, input: UpdateStudentInput!): StudentType!
+  updateTeacher(id: ID!, input: UpdateTeacherInputGql!): TeacherType!
+  updateTimetableSlot(id: ID!, input: UpdateTimetableSlotInput!): TimetableSlotType!
+  upsertQRConfig(input: QRConfigInputGql!): QRConfigType!
+}
+
+enum NoticeCategory {
+  EXAM
+  FEE
+  GENERAL
+  HOLIDAY
+  MOCK_TEST
+  PFM
+}
+
+type NoticeListType {
+  count: Int!
+  hasNextPage: Boolean!
+  items: [NoticeType!]!
+  total: Int!
+}
+
+type NoticeType {
+  attachmentUrl: String
+  category: NoticeCategory!
+  content: String!
+  createdAt: String!
+  expiresAt: String
+  id: String!
+  isActive: Boolean!
+  isImportant: Boolean!
+  postedById: String!
+  targetRoles: [String!]!
+  title: String!
+}
+
+type NotificationItemType {
+  body: String!
+  createdAt: String!
+  id: String!
+  isRead: Boolean!
+  notificationId: String!
+  readAt: String
+  title: String!
+  type: String!
+}
+
+type NotificationListType {
+  count: Int!
+  hasNextPage: Boolean!
+  items: [NotificationItemType!]!
+  total: Int!
+}
+
+type OverallAttendanceStats {
+  date: String!
+  presentStudents: Int!
+  presentTeachers: Int!
+  studentAttendancePercent: Float!
+  teacherAttendancePercent: Float!
+  totalStudents: Int!
+  totalTeachers: Int!
+}
+
+input PaginationArgs {
+  cursor: String
+  limit: Int! = 20
+  offset: Int! = 0
+}
+
+input PasswordLoginInput {
+  email: String!
+  password: String!
+  role: UserRole!
+}
+
+input ProcessSalaryInputGql {
+  id: String!
+  paidAmount: Float!
+  paidDate: String
+  paymentMode: String
+  paymentRef: String
+  remarks: String
+}
+
+input QRConfigInputGql {
+  accountName: String!
+  qrImageUrl: String
+  upiId: String!
+}
+
+type QRConfigType {
+  accountName: String!
+  id: String!
+  isActive: Boolean!
+  qrImageUrl: String
+  upiId: String!
+}
+
+type Query {
+  adminDashboard: AdminDashboardType!
+  admissionApplications(pagination: PaginationArgs, search: String, status: String): AdmissionListType!
+  admissionStats: AdmissionStatsType!
+
+  """View all user credentials (Admin/Director)"""
+  allUserCredentials(role: UserRole): [UserCredentialType!]!
+  batch(id: ID!): BatchType!
+  batches(pagination: PaginationArgs): BatchListType!
+  busRoutes: [BusRouteType!]!
+  classAttendanceForDate(className: String!, date: String!, section: String): [StudentAttendanceRecordType!]!
+  classAttendanceOverview(date: String): [ClassAttendanceSummaryType!]!
+  classWiseAttendance: [BatchAttendanceType!]!
+  complaints(pagination: PaginationArgs, search: String, status: String): ComplaintListType!
+  directorDashboard: DirectorDashboardType!
+  examSchedules(className: String, pagination: PaginationArgs, search: String, section: String): ExamScheduleListType!
+  examStats(className: String!, examScheduleId: String!, section: String): ExamStatsType!
+  feeRecord(id: ID!): FeeRecordType!
+  feeRecords(filter: FeeFilterInputGql, pagination: PaginationArgs): FeeListType!
+  feeStats(className: String, section: String): FeeStatsType!
+  homeworkList(className: String, pagination: PaginationArgs, section: String, subject: String): HomeworkListType!
+  leaveApplications(pagination: PaginationArgs, status: String): LeaveListType!
+
+  """Get current authenticated user profile"""
+  me: AuthUserType!
+  monthlyFeeCollection(year: Int!): [MonthlyCollectionType!]!
+  myAttendance(month: Int!, studentId: String, year: Int!): [AttendanceRecordType!]!
+  myAttendanceSummary(studentId: String): AttendanceSummaryType!
+  myChildren: [StudentType!]!
+  myComplaints(pagination: PaginationArgs): ComplaintListType!
+  myExamResults(pagination: PaginationArgs): ExamResultListType!
+  myFees(studentId: String): [FeeRecordType!]!
+  myHomework(pagination: PaginationArgs): HomeworkListType!
+  myLeaveApplications(pagination: PaginationArgs): LeaveListType!
+  myNotifications(pagination: PaginationArgs): NotificationListType!
+  mySalaryRecords(year: Int): [SalaryRecordType!]!
+  myStudentProfile: StudentType!
+  myTeacherAttendanceHistory(month: Int!, year: Int!): [TeacherAttendanceRecordType!]!
+  myTeacherAttendanceSummary(month: Int!, year: Int!): AttendanceSummaryType!
+  myTeacherProfile: TeacherType!
+  myTimetable: [TimetableSlotType!]!
+  myTodayAttendance: TeacherAttendanceRecordType
+  nextRollNumber(className: String!, section: String): Int!
+  notice(id: ID!): NoticeType!
+  notices(category: String, isImportant: Boolean, limit: Int! = 20, offset: Int! = 0, search: String): NoticeListType!
+  overallAttendanceStats(date: String): OverallAttendanceStats!
+  qrPaymentConfig: QRConfigType
+  salaryRecords(month: Int!, pagination: PaginationArgs, search: String, status: SalaryStatus, year: Int!): SalaryListType!
+  salaryStats(month: Int!, year: Int!): SalaryStatsType!
+  student(id: ID!): StudentType!
+  students(filter: StudentFilterInput, pagination: PaginationArgs): StudentListType!
+  studentsByClass(className: String!, section: String): [StudentType!]!
+  syllabusForClass(className: String!, section: String): [SyllabusSubjectType!]!
+  teacher(id: ID!): TeacherType!
+  teacherAttendanceForDate(date: String!): [TeacherAttendanceRecordType!]!
+  teacherDepartments: [String!]!
+  teachers(filter: TeacherFilterInputGql, pagination: PaginationArgs): TeacherListType!
+  timetableForClass(className: String!, section: String): [TimetableSlotType!]!
+  unreadNotificationsCount: Int!
+
+  """View a user's credentials (Admin/Director)"""
+  userCredentials(userId: String!): UserCredentialType!
+}
+
+input RefreshTokenInput {
+  refreshToken: String!
+}
+
+input ResetUserPasswordInput {
+  """If omitted, a temp password is auto-generated"""
+  newPassword: String
+  userId: String!
+}
+
+type SalaryListType {
+  count: Int!
+  hasNextPage: Boolean!
+  items: [SalaryRecordType!]!
+  total: Int!
+}
+
+type SalaryRecordType {
+  baseSalary: Float!
+  bonuses: Float!
+  createdAt: String
+  daysWorked: Int!
+  deductions: Float!
+  department: String
+  employeeId: String
+  id: String!
+  month: Int!
+  netPay: Float!
+  paidAmount: Float!
+  paidDate: String
+  paymentMode: String
+  paymentRef: String
+  remarks: String
+  status: SalaryStatus!
+  teacherId: String!
+  teacherName: String
+  totalWorkingDays: Int!
+  year: Int!
+}
+
+type SalaryStatsType {
+  month: Int!
+  paidAmount: Float!
+  paidCount: Int!
+  pendingAmount: Float!
+  pendingCount: Int!
+  totalPayroll: Float!
+  totalTeachers: Int!
+  year: Int!
+}
+
+enum SalaryStatus {
+  PAID
+  PENDING
+  PROCESSED
+}
+
+input SendNotificationInput {
+  body: String!
+  targetRole: String
+  targetUserIds: [ID!]
+  title: String!
+  type: String!
+}
+
+type StudentAttendanceRecordType {
+  date: String!
+  enrollmentNo: String
+  id: String!
+  remarks: String
+  rollNumber: Int
+  status: AttendanceStatus!
+  studentId: String!
+  studentName: String!
+  subject: String
+}
+
+input StudentFilterInput {
+  className: String
+  isActive: Boolean
+  search: String
+  section: String
+}
+
+type StudentListType {
+  count: Int!
+  hasNextPage: Boolean!
+  items: [StudentType!]!
+  total: Int!
+}
+
+type StudentType {
+  address: String
+  admissionDate: String
+  avatarUrl: String
+  bloodGroup: String
+  className: String
+  createdAt: String!
+  dateOfBirth: String
+  email: String
+  enrollmentNo: String!
+  firstName: String!
+  fullName: String!
+  gender: Gender
+  id: String!
+  isActive: Boolean!
+  lastName: String!
+  parentEmail: String
+  parentId: String
+  parentName: String
+  parentPhone: String
+  parentTempPassword: String
+  phone: String
+  rollNumber: Int
+  section: String
+  tempPassword: String
+  userId: String!
+}
+
+input SubmitHomeworkInput {
+  fileUrl: String
+  homeworkId: String!
+  remarks: String
+  studentId: String!
+}
+
+type SyllabusSubjectType {
+  className: String
+  completedTopics: Int!
+  id: String!
+  section: String
+  subjectName: String!
+  topics: [SyllabusTopicType!]!
+  topicsCount: Int!
+}
+
+type SyllabusTopicType {
+  completedAt: String
+  description: String
+  id: String!
+  isCompleted: Boolean!
+  order: Int!
+  subjectId: String!
+  title: String!
+}
+
+type TeacherAttendanceRecordType {
+  checkInTime: String
+  checkOutTime: String
+  date: String!
+  id: String!
+  remarks: String
+  status: AttendanceStatus!
+  teacherId: String!
+  teacherName: String
+}
+
+input TeacherFilterInputGql {
+  department: String
+  isActive: Boolean
+  search: String
+  status: String
+}
+
+type TeacherListType {
+  count: Int!
+  hasNextPage: Boolean!
+  items: [TeacherType!]!
+  total: Int!
+}
+
+type TeacherType {
+  address: String
+  assignedClassName: String
+  assignedSection: String
+  avatarUrl: String
+  bankAccountNo: String
+  bankIfsc: String
+  bankName: String
+  baseSalary: Float!
+  createdAt: String!
+  department: String!
+  email: String!
+  employeeId: String!
+  firstName: String!
+  fullName: String!
+  id: String!
+  isActive: Boolean!
+  joiningDate: String!
+  lastName: String!
+  phone: String
+  qualification: String
+  status: String!
+  subject: String!
+  tempPassword: String
+  userId: String!
+}
+
+type TimetableSlotType {
+  className: String
+  day: String!
+  endTime: String!
+  id: String!
+  period: Int!
+  room: String
+  section: String
+  startTime: String!
+  subject: String!
+  teacherId: String
+  teacherName: String
+}
+
+input UpdateAdmissionStatusInput {
+  id: String!
+  remarks: String
+  status: AdmissionStatus!
+}
+
+input UpdateBatchInput {
+  academicYear: String
+  isActive: Boolean
+  monthlyFee: Float
+  name: String
+  section: String
+}
+
+input UpdateExamScheduleInput {
+  date: String
+  duration: String
+  endTime: String
+  examName: String
+  maxMarks: Float
+  room: String
+  startTime: String
+  subject: String
+}
+
+input UpdateFeeStatusInputGql {
+  id: String!
+  paidDate: String
+  paymentMode: String
+  paymentScreenshotUrl: String
+  remarks: String
+  status: FeeStatus!
+}
+
+input UpdateNoticeInputGql {
+  category: NoticeCategory
+  content: String
+  isActive: Boolean
+  isImportant: Boolean
+  title: String
+}
+
+input UpdateSalaryInputGql {
+  bonuses: Float
+  deductions: Float
+  remarks: String
+}
+
+input UpdateStudentInput {
+  address: String
+  bloodGroup: String
+  className: String
+  dateOfBirth: String
+  firstName: String
+  gender: Gender
+  isActive: Boolean
+  lastName: String
+  parentId: String
+  rollNumber: Int
+  section: String
+}
+
+input UpdateTeacherInputGql {
+  address: String
+  assignedClassName: String
+  assignedSection: String
+  bankAccountNo: String
+  bankIfsc: String
+  bankName: String
+  baseSalary: Float
+  department: String
+  firstName: String
+  isActive: Boolean
+  lastName: String
+  phone: String
+  qualification: String
+  status: String
+  subject: String
+}
+
+input UpdateTimetableSlotInput {
+  endTime: String
+  room: String
+  startTime: String
+  subject: String
+  teacherId: String
+}
+
+type UserCredentialType {
+  email: String!
+  id: String!
+  isActive: Boolean!
+  phone: String
+  role: UserRole!
+  tempPassword: String
+}
+
+enum UserRole {
+  ADMIN
+  DIRECTOR
+  PARENT
+  STUDENT
+  TEACHER
+}

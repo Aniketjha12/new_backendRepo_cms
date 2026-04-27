@@ -1,0 +1,702 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String             @id @default(uuid())
+  email                 String             @unique
+  phone                 String?            @unique
+  passwordHash          String?
+  role                  UserRole
+  isActive              Boolean            @default(true)
+  isVerified            Boolean            @default(false)
+  avatarUrl             String?
+  fcmToken              String?
+  lastLoginAt           DateTime?
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  tempPassword          String?
+  complaints            Complaint[]        @relation("ComplaintSubmitter")
+  leaveApplications     LeaveApplication[]
+  sentNotifications     Notification[]     @relation("SentNotifications")
+  otpCodes              OtpCode[]
+  parentProfile         ParentProfile?
+  refreshTokens         RefreshToken[]
+  studentProfile        StudentProfile?
+  teacherProfile        TeacherProfile?
+  receivedNotifications UserNotification[]
+
+  @@map("users")
+}
+
+model OtpCode {
+  id        String   @id @default(uuid())
+  userId    String?
+  contact   String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([contact])
+  @@map("otp_codes")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model StudentProfile {
+  id                  String               @id @default(uuid())
+  userId              String               @unique
+  enrollmentNo        String               @unique
+  firstName           String
+  lastName            String
+  dateOfBirth         DateTime?
+  gender              Gender?
+  bloodGroup          String?
+  address             String?
+  batchId             String?
+  rollNumber          Int?
+  parentId            String?
+  admissionDate       DateTime?
+  isActive            Boolean              @default(true)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  examResults         ExamResult[]
+  feeRecords          FeeRecord[]
+  gradeRecords        GradeRecord[]
+  homeworkSubmissions HomeworkSubmission[]
+  leaveApplications   LeaveApplication[]
+  attendanceRecords   StudentAttendance[]
+  batch               Batch?               @relation(fields: [batchId], references: [id])
+  parent              ParentProfile?       @relation(fields: [parentId], references: [id])
+  user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([batchId])
+  @@index([enrollmentNo])
+  @@map("student_profiles")
+}
+
+model TeacherProfile {
+  id                String              @id @default(uuid())
+  userId            String              @unique
+  employeeId        String              @unique
+  firstName         String
+  lastName          String
+  dateOfBirth       DateTime?
+  gender            Gender?
+  qualification     String?
+  subject           String
+  department        String
+  joiningDate       DateTime
+  baseSalary        Float               @default(0)
+  status            String              @default("Active")
+  address           String?
+  bankAccountNo     String?
+  bankName          String?
+  bankIfsc          String?
+  assignedBatchId   String?
+  isActive          Boolean             @default(true)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  homeworks         Homework[]
+  leaveApplications LeaveApplication[]
+  salaryRecords     SalaryRecord[]
+  syllabus          SyllabusSubject[]
+  attendanceRecords TeacherAttendance[]
+  assignedBatch     Batch?              @relation("AssignedBatch", fields: [assignedBatchId], references: [id])
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  timetableSlots    TimetableSlot[]
+
+  @@index([department])
+  @@map("teacher_profiles")
+}
+
+model ParentProfile {
+  id        String           @id @default(uuid())
+  userId    String           @unique
+  firstName String
+  lastName  String
+  relation  String           @default("Parent")
+  isActive  Boolean          @default(true)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  children  StudentProfile[]
+
+  @@map("parent_profiles")
+}
+
+model Batch {
+  id                       String                   @id @default(uuid())
+  name                     String
+  section                  String
+  academicYear             String
+  capacity                 Int                      @default(40)
+  isActive                 Boolean                  @default(true)
+  createdAt                DateTime                 @default(now())
+  updatedAt                DateTime                 @updatedAt
+  monthlyFee               Float                    @default(0)
+  classAttendanceSummaries ClassAttendanceSummary[]
+  examSchedules            ExamSchedule[]
+  homeworks                Homework[]
+  students                 StudentProfile[]
+  syllabusSubjects         SyllabusSubject[]
+  assignedTeachers         TeacherProfile[]         @relation("AssignedBatch")
+  timetableSlots           TimetableSlot[]
+
+  @@unique([name, section, academicYear])
+  @@index([name, section])
+  @@map("batches")
+}
+
+model AdmissionApplication {
+  id                String          @id @default(uuid())
+  applicationNo     String          @unique @default(uuid())
+  studentName       String
+  dateOfBirth       DateTime
+  gender            Gender
+  parentName        String
+  parentPhone       String
+  parentEmail       String
+  batchApplied      String
+  previousInstitute String?
+  address           String?
+  status            AdmissionStatus @default(PENDING)
+  remarks           String?
+  processedBy       String?
+  processedAt       DateTime?
+  applicationDate   DateTime        @default(now())
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([status])
+  @@index([parentEmail])
+  @@map("admission_applications")
+}
+
+model StudentAttendance {
+  id         String           @id @default(uuid())
+  studentId  String
+  batchId    String
+  date       DateTime         @db.Date
+  status     AttendanceStatus
+  subject    String?
+  markedById String?
+  remarks    String?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  student    StudentProfile   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, date])
+  @@index([studentId, date])
+  @@index([batchId, date])
+  @@map("student_attendance")
+}
+
+model ClassAttendanceSummary {
+  id            String   @id @default(uuid())
+  batchId       String
+  date          DateTime @db.Date
+  totalStudents Int
+  presentCount  Int
+  absentCount   Int
+  leaveCount    Int
+  createdAt     DateTime @default(now())
+  batch         Batch    @relation(fields: [batchId], references: [id])
+
+  @@unique([batchId, date])
+  @@index([batchId, date])
+  @@map("class_attendance_summaries")
+}
+
+model TeacherAttendance {
+  id           String           @id @default(uuid())
+  teacherId    String
+  date         DateTime         @db.Date
+  status       AttendanceStatus
+  checkInTime  String?
+  checkOutTime String?
+  markedById   String?
+  remarks      String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  teacher      TeacherProfile   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, date])
+  @@index([teacherId, date])
+  @@map("teacher_attendance")
+}
+
+model FeeRecord {
+  id                   String         @id @default(uuid())
+  receiptNo            String?        @unique
+  studentId            String
+  feeType              String
+  amount               Float
+  discount             Float          @default(0)
+  netAmount            Float
+  dueDate              DateTime
+  status               FeeStatus      @default(PENDING)
+  paymentMode          String?
+  paidDate             DateTime?
+  paymentScreenshotUrl String?
+  isVerified           Boolean        @default(false)
+  verifiedBy           String?
+  verifiedAt           DateTime?
+  remarks              String?
+  createdBy            String
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  student              StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([status])
+  @@index([dueDate])
+  @@map("fee_records")
+}
+
+model QRPaymentConfig {
+  id          String   @id @default(uuid())
+  upiId       String
+  accountName String
+  qrImageUrl  String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("qr_payment_configs")
+}
+
+model SalaryRecord {
+  id               String         @id @default(uuid())
+  teacherId        String
+  month            Int
+  year             Int
+  baseSalary       Float
+  deductions       Float          @default(0)
+  bonuses          Float          @default(0)
+  netPay           Float
+  daysWorked       Int
+  totalWorkingDays Int
+  status           SalaryStatus   @default(PENDING)
+  paidDate         DateTime?
+  paymentMode      String?
+  paymentRef       String?
+  remarks          String?
+  processedBy      String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  paidAmount       Float          @default(0)
+  teacher          TeacherProfile @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, month, year])
+  @@index([teacherId])
+  @@index([month, year])
+  @@map("salary_records")
+}
+
+model TimetableSlot {
+  id        String          @id @default(uuid())
+  batchId   String
+  teacherId String?
+  day       String
+  period    Int
+  subject   String
+  room      String?
+  startTime String
+  endTime   String
+  isActive  Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  batch     Batch           @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  teacher   TeacherProfile? @relation(fields: [teacherId], references: [id])
+
+  @@unique([batchId, day, period])
+  @@index([batchId])
+  @@index([teacherId])
+  @@map("timetable_slots")
+}
+
+model ExamSchedule {
+  id        String       @id @default(uuid())
+  examName  String
+  subject   String
+  batchId   String
+  date      DateTime     @db.Date
+  startTime String
+  endTime   String
+  duration  String
+  room      String?
+  maxMarks  Int          @default(100)
+  isActive  Boolean      @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  results   ExamResult[]
+  batch     Batch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([batchId, date])
+  @@map("exam_schedules")
+}
+
+model ExamResult {
+  id             String         @id @default(uuid())
+  examScheduleId String
+  studentId      String
+  marksObtained  Float
+  maxMarks       Float
+  grade          String?
+  rank           Int?
+  remarks        String?
+  enteredBy      String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  examSchedule   ExamSchedule   @relation(fields: [examScheduleId], references: [id], onDelete: Cascade)
+  student        StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([examScheduleId, studentId])
+  @@index([studentId])
+  @@map("exam_results")
+}
+
+model GradeRecord {
+  id              String         @id @default(uuid())
+  studentId       String
+  subject         String
+  assessmentGroup String
+  studentGroup    String
+  totalScore      Float
+  maxScore        Float
+  grade           String
+  program         String
+  academicYear    String
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  student         StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@map("grade_records")
+}
+
+model Notice {
+  id            String         @id @default(uuid())
+  title         String
+  content       String
+  category      NoticeCategory @default(GENERAL)
+  isImportant   Boolean        @default(false)
+  postedById    String
+  targetRoles   UserRole[]
+  attachmentUrl String?
+  expiresAt     DateTime?
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([category])
+  @@index([isImportant])
+  @@map("notices")
+}
+
+model Complaint {
+  id            String          @id @default(uuid())
+  title         String
+  description   String
+  submittedById String
+  submitterRole UserRole
+  status        ComplaintStatus @default(PENDING)
+  adminResponse String?
+  respondedBy   String?
+  respondedAt   DateTime?
+  attachmentUrl String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  submittedBy   User            @relation("ComplaintSubmitter", fields: [submittedById], references: [id])
+
+  @@index([status])
+  @@index([submittedById])
+  @@map("complaints")
+}
+
+model LeaveApplication {
+  id               String          @id @default(uuid())
+  applicantId      String
+  applicantRole    UserRole
+  studentProfileId String?
+  teacherProfileId String?
+  fromDate         DateTime        @db.Date
+  toDate           DateTime        @db.Date
+  totalDays        Int
+  reason           String
+  status           LeaveStatus     @default(PENDING)
+  adminNote        String?
+  processedBy      String?
+  processedAt      DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  applicant        User            @relation(fields: [applicantId], references: [id])
+  studentProfile   StudentProfile? @relation(fields: [studentProfileId], references: [id])
+  teacherProfile   TeacherProfile? @relation(fields: [teacherProfileId], references: [id])
+
+  @@index([applicantId])
+  @@index([status])
+  @@map("leave_applications")
+}
+
+model SyllabusSubject {
+  id           String          @id @default(uuid())
+  subjectName  String
+  batchId      String
+  teacherId    String?
+  academicYear String
+  isActive     Boolean         @default(true)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  batch        Batch           @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  teacher      TeacherProfile? @relation(fields: [teacherId], references: [id])
+  topics       SyllabusTopic[]
+
+  @@unique([subjectName, batchId, academicYear])
+  @@index([batchId])
+  @@map("syllabus_subjects")
+}
+
+model SyllabusTopic {
+  id          String          @id @default(uuid())
+  subjectId   String
+  title       String
+  description String?
+  isCompleted Boolean         @default(false)
+  completedAt DateTime?
+  order       Int             @default(0)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  subject     SyllabusSubject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@index([subjectId])
+  @@map("syllabus_topics")
+}
+
+model Homework {
+  id                  String               @id @default(uuid())
+  title               String
+  description         String
+  subject             String
+  batchId             String
+  assignedById        String
+  dueDate             DateTime
+  status              HomeworkStatus       @default(PENDING)
+  attachmentUrl       String?
+  solutionUrl         String?
+  solutionDescription String?
+  isActive            Boolean              @default(true)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  submissions         HomeworkSubmission[]
+  assignedBy          TeacherProfile       @relation(fields: [assignedById], references: [id])
+  batch               Batch                @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([batchId, dueDate])
+  @@index([assignedById])
+  @@map("homeworks")
+}
+
+model HomeworkSubmission {
+  id          String         @id @default(uuid())
+  homeworkId  String
+  studentId   String
+  fileUrl     String?
+  remarks     String?
+  submittedAt DateTime       @default(now())
+  grade       String?
+  feedback    String?
+  homework    Homework       @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([homeworkId, studentId])
+  @@index([studentId])
+  @@map("homework_submissions")
+}
+
+model BusRoute {
+  id               String          @id @default(uuid())
+  routeName        String
+  routeNumber      String          @unique
+  driverName       String
+  driverPhone      String
+  driverLicenseNo  String?
+  busNumber        String
+  capacity         Int
+  currentOccupancy Int             @default(0)
+  status           TransportStatus @default(ACTIVE)
+  isActive         Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  stops            BusStop[]
+
+  @@map("bus_routes")
+}
+
+model BusStop {
+  id         String   @id @default(uuid())
+  routeId    String
+  name       String
+  pickupTime String
+  dropTime   String
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  route      BusRoute @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  @@index([routeId])
+  @@map("bus_stops")
+}
+
+model Notification {
+  id                String             @id @default(uuid())
+  title             String
+  body              String
+  type              NotificationType   @default(GENERAL)
+  sentById          String?
+  targetRoles       UserRole[]
+  metadata          Json?
+  createdAt         DateTime           @default(now())
+  sentBy            User?              @relation("SentNotifications", fields: [sentById], references: [id])
+  userNotifications UserNotification[]
+
+  @@index([type])
+  @@map("notifications")
+}
+
+model UserNotification {
+  id             String       @id @default(uuid())
+  notificationId String
+  userId         String
+  isRead         Boolean      @default(false)
+  readAt         DateTime?
+  createdAt      DateTime     @default(now())
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, userId])
+  @@index([userId, isRead])
+  @@map("user_notifications")
+}
+
+model UserProvision {
+  id                String    @id @default(uuid())
+  name              String
+  email             String    @unique
+  phone             String?
+  role              UserRole
+  batchName         String?
+  temporaryPassword String?
+  isActivated       Boolean   @default(false)
+  activatedAt       DateTime?
+  createdBy         String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("user_provisions")
+}
+
+enum UserRole {
+  STUDENT
+  PARENT
+  TEACHER
+  ADMIN
+  DIRECTOR
+}
+
+enum AdmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  WAITLISTED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LEAVE
+  HOLIDAY
+  HALF_DAY
+}
+
+enum FeeStatus {
+  PAID
+  PENDING
+  OVERDUE
+  VERIFYING
+}
+
+enum SalaryStatus {
+  PENDING
+  PROCESSED
+  PAID
+}
+
+enum ComplaintStatus {
+  PENDING
+  IN_REVIEW
+  RESOLVED
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum NoticeCategory {
+  GENERAL
+  EXAM
+  HOLIDAY
+  MOCK_TEST
+  PFM
+  FEE
+}
+
+enum HomeworkStatus {
+  PENDING
+  SUBMITTED
+  OVERDUE
+}
+
+enum NotificationType {
+  ATTENDANCE
+  HOMEWORK
+  NOTICE
+  FEE
+  GENERAL
+  EXAM
+  SALARY
+  LEAVE
+  COMPLAINT
+}
+
+enum TransportStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
