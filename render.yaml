@@ -3,7 +3,7 @@ services:
     name: skm-classes-backend
     runtime: node
     plan: free
-    region: singapore
+    region: frankfurt
     buildCommand: npm install --include=dev && npm run build && npx prisma generate
     startCommand: npx prisma migrate deploy && npm run start:prod
     healthCheckPath: /graphql
@@ -26,4 +26,4 @@ services:
 databases:
   - name: skm-classes-db
     plan: free
-    region: singapore
+    region: frankfurt
