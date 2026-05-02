@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "batches" ADD COLUMN     "monthlyFee" DOUBLE PRECISION NOT NULL DEFAULT 0;
