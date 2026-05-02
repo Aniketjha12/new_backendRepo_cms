@@ -3,9 +3,10 @@ services:
     name: skm-classes-backend
     runtime: node
     plan: free
-    region: singapore # Change to your preferred region
+    region: singapore
     buildCommand: npm install && npm run build && npx prisma generate
     startCommand: npx prisma migrate deploy && npm run start:prod
+    healthCheckPath: /graphql
     envVars:
       - key: NODE_ENV
         value: production
@@ -19,10 +20,8 @@ services:
         generateValue: true
       - key: JWT_REFRESH_SECRET
         generateValue: true
-      - key: CORS_ORIGINS
-        value: "http://localhost:3000"
       - key: ALLOWED_ORIGINS
-        value: "*" # Update this with your frontend URL later
+        value: "*" # Update this with your frontend URL later for better security
 
 databases:
   - name: skm-classes-db
