@@ -64,9 +64,10 @@ async function bootstrap() {
   // const { NestExpressApplication } = await import('@nestjs/platform-express');
   // app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads' });
 
-  const port = process.env.PORT ?? 4000;
-  await app.listen(port);
-  console.log(`🚀 Server running at http://localhost:${port}/graphql`);
+  const port = process.env.PORT || 4000;
+  console.log(`📡 Attempting to bind to port: ${port}`);
+  await app.listen(port, '0.0.0.0');
+  console.log(`🚀 Server running at http://0.0.0.0:${port}/graphql`);
 }
 
 bootstrap();
